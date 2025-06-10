@@ -1,132 +1,132 @@
-# ƒ}ƒCƒ“ƒXƒC[ƒp[ (Minesweeper Game)
+# ãƒžã‚¤ãƒ³ã‚¹ã‚¤ãƒ¼ãƒ‘ãƒ¼ (Minesweeper Game)
 
-ƒuƒ‰ƒEƒU‚Å—V‚×‚éƒNƒ‰ƒVƒbƒN‚Èƒ}ƒCƒ“ƒXƒC[ƒp[ƒQ[ƒ€‚Å‚·BHTMLACSSAJavaScript‚ÅŽÀ‘•‚³‚ê‚½ƒVƒ“ƒvƒ‹‚ÅŠy‚µ‚¢WebƒQ[ƒ€‚Å‚·B
+ãƒ–ãƒ©ã‚¦ã‚¶ã§éŠã¹ã‚‹ã‚¯ãƒ©ã‚·ãƒƒã‚¯ãªãƒžã‚¤ãƒ³ã‚¹ã‚¤ãƒ¼ãƒ‘ãƒ¼ã‚²ãƒ¼ãƒ ã§ã™ã€‚HTMLã€CSSã€JavaScriptã§å®Ÿè£…ã•ã‚ŒãŸã‚·ãƒ³ãƒ—ãƒ«ã§æ¥½ã—ã„Webã‚²ãƒ¼ãƒ ã§ã™ã€‚
 
-## ? ƒQ[ƒ€ŠT—v
+##  ã‚²ãƒ¼ãƒ æ¦‚è¦
 
-’n—‹‚ª‰B‚³‚ê‚½ƒ}ƒX–Ú‚Ì’†‚©‚çA’n—‹‚ð”ð‚¯‚È‚ª‚ç‚·‚×‚Ä‚ÌˆÀ‘S‚ÈƒZƒ‹‚ðŠJ‚­ƒpƒYƒ‹ƒQ[ƒ€‚Å‚·B”Žš‚Ìƒqƒ“ƒg‚ð—Š‚è‚É’n—‹‚ÌˆÊ’u‚ð„—‚µ‚Ü‚µ‚å‚¤B
+åœ°é›·ãŒéš ã•ã‚ŒãŸãƒžã‚¹ç›®ã®ä¸­ã‹ã‚‰ã€åœ°é›·ã‚’é¿ã‘ãªãŒã‚‰ã™ã¹ã¦ã®å®‰å…¨ãªã‚»ãƒ«ã‚’é–‹ããƒ‘ã‚ºãƒ«ã‚²ãƒ¼ãƒ ã§ã™ã€‚æ•°å­—ã®ãƒ’ãƒ³ãƒˆã‚’é ¼ã‚Šã«åœ°é›·ã®ä½ç½®ã‚’æŽ¨ç†ã—ã¾ã—ã‚‡ã†ã€‚
 
-## ? —V‚Ñ•û
+##  éŠã³æ–¹
 
-### Šî–{‘€ì
-- **¶ƒNƒŠƒbƒN**: ƒZƒ‹‚ðŠJ‚­
-- **‰EƒNƒŠƒbƒN**: ƒtƒ‰ƒO‚ð—§‚Ä‚é/ŠO‚·
+### åŸºæœ¬æ“ä½œ
+- **å·¦ã‚¯ãƒªãƒƒã‚¯**: ã‚»ãƒ«ã‚’é–‹ã
+- **å³ã‚¯ãƒªãƒƒã‚¯**: ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹/å¤–ã™
 
-### ƒ‹[ƒ‹
-1. ”Žš‚ÍŽüˆÍ8ƒ}ƒX‚É‚ ‚é’n—‹‚ÌŒÂ”‚ð•\Ž¦
-2. ’n—‹ˆÈŠO‚ÌƒZƒ‹‚ð‚·‚×‚ÄŠJ‚¯‚ÎƒNƒŠƒA
-3. ’n—‹‚ðƒNƒŠƒbƒN‚·‚é‚ÆƒQ[ƒ€ƒI[ƒo[
-4. ƒtƒ‰ƒO‚Å’n—‹‚ÌˆÊ’u‚ðƒ}[ƒN‚Å‚«‚Ü‚·
+### ãƒ«ãƒ¼ãƒ«
+1. æ•°å­—ã¯å‘¨å›²8ãƒžã‚¹ã«ã‚ã‚‹åœ°é›·ã®å€‹æ•°ã‚’è¡¨ç¤º
+2. åœ°é›·ä»¥å¤–ã®ã‚»ãƒ«ã‚’ã™ã¹ã¦é–‹ã‘ã°ã‚¯ãƒªã‚¢
+3. åœ°é›·ã‚’ã‚¯ãƒªãƒƒã‚¯ã™ã‚‹ã¨ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
+4. ãƒ•ãƒ©ã‚°ã§åœ°é›·ã®ä½ç½®ã‚’ãƒžãƒ¼ã‚¯ã§ãã¾ã™
 
-## ? “ïˆÕ“xÝ’è
+##  é›£æ˜“åº¦è¨­å®š
 
-| ƒŒƒxƒ‹ | ƒ}ƒX–Ú | ’n—‹” |
+| ãƒ¬ãƒ™ãƒ« | ãƒžã‚¹ç›® | åœ°é›·æ•° |
 |--------|--------|--------|
-| ‰‹‰   | 9~9    | 10ŒÂ   |
-| ’†‹‰   | 16~16  | 40ŒÂ   |
-| ã‹‰   | 30~16  | 99ŒÂ   |
+| åˆç´š   | 9Ã—9    | 10å€‹   |
+| ä¸­ç´š   | 16Ã—16  | 40å€‹   |
+| ä¸Šç´š   | 30Ã—16  | 99å€‹   |
 
-## ? Žå‚È‹@”\
+## ? ä¸»ãªæ©Ÿèƒ½
 
-- ? **ƒ^ƒCƒ}[‹@”\** - ƒvƒŒƒCŽžŠÔ‚ðŽ©“®Œv‘ª
-- ? **’n—‹ƒJƒEƒ“ƒ^[** - Žc‚è’n—‹”‚ðƒŠƒAƒ‹ƒ^ƒCƒ€•\Ž¦
-- ? **ƒJƒ‰ƒtƒ‹UI** - ”Žš‚²‚Æ‚ÉF•ª‚¯‚³‚ê‚½Œ©‚â‚·‚¢ƒfƒUƒCƒ“
-- ? **ƒŒƒXƒ|ƒ“ƒVƒu‘Î‰ž** - ƒXƒ}[ƒgƒtƒHƒ“‚Å‚à‰õ“K‚ÉƒvƒŒƒC
-- ? **ƒQ[ƒ€ƒŠƒZƒbƒg** - ƒƒ“ƒNƒŠƒbƒN‚ÅVƒQ[ƒ€ŠJŽn
+-  **ã‚¿ã‚¤ãƒžãƒ¼æ©Ÿèƒ½** - ãƒ—ãƒ¬ã‚¤æ™‚é–“ã‚’è‡ªå‹•è¨ˆæ¸¬
+-  **åœ°é›·ã‚«ã‚¦ãƒ³ã‚¿ãƒ¼** - æ®‹ã‚Šåœ°é›·æ•°ã‚’ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ è¡¨ç¤º
+-  **ã‚«ãƒ©ãƒ•ãƒ«UI** - æ•°å­—ã”ã¨ã«è‰²åˆ†ã‘ã•ã‚ŒãŸè¦‹ã‚„ã™ã„ãƒ‡ã‚¶ã‚¤ãƒ³
+-  **ãƒ¬ã‚¹ãƒãƒ³ã‚·ãƒ–å¯¾å¿œ** - ã‚¹ãƒžãƒ¼ãƒˆãƒ•ã‚©ãƒ³ã§ã‚‚å¿«é©ã«ãƒ—ãƒ¬ã‚¤
+-  **ã‚²ãƒ¼ãƒ ãƒªã‚»ãƒƒãƒˆ** - ãƒ¯ãƒ³ã‚¯ãƒªãƒƒã‚¯ã§æ–°ã‚²ãƒ¼ãƒ é–‹å§‹
 
-## ? ƒvƒŒƒC•û–@
+##  ãƒ—ãƒ¬ã‚¤æ–¹æ³•
 
-### ƒIƒ“ƒ‰ƒCƒ“‚ÅƒvƒŒƒC
-ˆÈ‰º‚ÌURL‚Åƒuƒ‰ƒEƒU‚©‚ç’¼ÚƒvƒŒƒC‚Å‚«‚Ü‚·F
+### ã‚ªãƒ³ãƒ©ã‚¤ãƒ³ã§ãƒ—ãƒ¬ã‚¤
+ä»¥ä¸‹ã®URLã§ãƒ–ãƒ©ã‚¦ã‚¶ã‹ã‚‰ç›´æŽ¥ãƒ—ãƒ¬ã‚¤ã§ãã¾ã™ï¼š
 ```
 https://licux.github.io/q-cli-tankgame/
 ```
 
-### ƒ[ƒJƒ‹ŠÂ‹«‚Å‚ÌŽÀs
+### ãƒ­ãƒ¼ã‚«ãƒ«ç’°å¢ƒã§ã®å®Ÿè¡Œ
 ```bash
-# ƒŠƒ|ƒWƒgƒŠ‚ðƒNƒ[ƒ“
+# ãƒªãƒã‚¸ãƒˆãƒªã‚’ã‚¯ãƒ­ãƒ¼ãƒ³
 git clone https://github.com/licux/q-cli-tankgame.git
 
-# ƒfƒBƒŒƒNƒgƒŠ‚ÉˆÚ“®
+# ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ç§»å‹•
 cd q-cli-tankgame
 
-# HTMLƒtƒ@ƒCƒ‹‚ðƒuƒ‰ƒEƒU‚ÅŠJ‚­
+# HTMLãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ–ãƒ©ã‚¦ã‚¶ã§é–‹ã
 open index.html
 ```
 
-## ?? ‹ZpŽd—l
+##  æŠ€è¡“ä»•æ§˜
 
-### Žg—p‹Zp
-- **HTML5** - ƒQ[ƒ€\‘¢‚Æƒ}[ƒNƒAƒbƒv
-- **CSS3** - ƒXƒ^ƒCƒŠƒ“ƒOEƒAƒjƒ[ƒVƒ‡ƒ“EƒŒƒXƒ|ƒ“ƒVƒuƒfƒUƒCƒ“
-- **Vanilla JavaScript** - ƒQ[ƒ€ƒƒWƒbƒNEDOM‘€ì
+### ä½¿ç”¨æŠ€è¡“
+- **HTML5** - ã‚²ãƒ¼ãƒ æ§‹é€ ã¨ãƒžãƒ¼ã‚¯ã‚¢ãƒƒãƒ—
+- **CSS3** - ã‚¹ã‚¿ã‚¤ãƒªãƒ³ã‚°ãƒ»ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ»ãƒ¬ã‚¹ãƒãƒ³ã‚·ãƒ–ãƒ‡ã‚¶ã‚¤ãƒ³
+- **Vanilla JavaScript** - ã‚²ãƒ¼ãƒ ãƒ­ã‚¸ãƒƒã‚¯ãƒ»DOMæ“ä½œ
 
-### ‘Î‰žƒuƒ‰ƒEƒU
-- Google Chrome („§)
+### å¯¾å¿œãƒ–ãƒ©ã‚¦ã‚¶
+- Google Chrome (æŽ¨å¥¨)
 - Mozilla Firefox
 - Safari
 - Microsoft Edge
-- ‚»‚Ì‘¼ƒ‚ƒ_ƒ“ƒuƒ‰ƒEƒU
+- ãã®ä»–ãƒ¢ãƒ€ãƒ³ãƒ–ãƒ©ã‚¦ã‚¶
 
-## ? ƒQ[ƒ€‰æ–Ê
+##  ã‚²ãƒ¼ãƒ ç”»é¢
 
-### ƒƒCƒ“‰æ–Ê
-- ƒVƒ“ƒvƒ‹‚Å•ª‚©‚è‚â‚·‚¢ƒQ[ƒ€ƒ{[ƒh
-- ã•”‚ÉŽc‚è’n—‹”‚ÆŒo‰ßŽžŠÔ‚ð•\Ž¦
-- “ïˆÕ“x‘I‘ð‚ÆƒŠƒZƒbƒgƒ{ƒ^ƒ“
+### ãƒ¡ã‚¤ãƒ³ç”»é¢
+- ã‚·ãƒ³ãƒ—ãƒ«ã§åˆ†ã‹ã‚Šã‚„ã™ã„ã‚²ãƒ¼ãƒ ãƒœãƒ¼ãƒ‰
+- ä¸Šéƒ¨ã«æ®‹ã‚Šåœ°é›·æ•°ã¨çµŒéŽæ™‚é–“ã‚’è¡¨ç¤º
+- é›£æ˜“åº¦é¸æŠžã¨ãƒªã‚»ãƒƒãƒˆãƒœã‚¿ãƒ³
 
-### F•ª‚¯ƒVƒXƒeƒ€
-Še”Žš‚ÍˆÈ‰º‚ÌF‚Å•\Ž¦‚³‚ê‚Ü‚·F
-- 1: ÂF
-- 2: —ÎF  
-- 3: ÔF
-- 4: ®F
-- 5`8: ‚»‚Ì‘¼‚ÌF
+### è‰²åˆ†ã‘ã‚·ã‚¹ãƒ†ãƒ 
+å„æ•°å­—ã¯ä»¥ä¸‹ã®è‰²ã§è¡¨ç¤ºã•ã‚Œã¾ã™ï¼š
+- 1: é’è‰²
+- 2: ç·‘è‰²  
+- 3: èµ¤è‰²
+- 4: ç´ºè‰²
+- 5ï½ž8: ãã®ä»–ã®è‰²
 
-## ? ƒtƒ@ƒCƒ‹\¬
+##  ãƒ•ã‚¡ã‚¤ãƒ«æ§‹æˆ
 
 ```
 q-cli-tankgame/
-„¥„Ÿ„Ÿ index.html          # ƒƒCƒ“HTMLƒtƒ@ƒCƒ‹iƒQ[ƒ€‘S‘Ìj
-„¥„Ÿ„Ÿ README.md          # ‚±‚Ìƒtƒ@ƒCƒ‹
-„¤„Ÿ„Ÿ LICENSE           # ƒ‰ƒCƒZƒ“ƒXî•ñ
+â”œâ”€â”€ index.html          # ãƒ¡ã‚¤ãƒ³HTMLãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆã‚²ãƒ¼ãƒ å…¨ä½“ï¼‰
+â”œâ”€â”€ README.md          # ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«
+â””â”€â”€ LICENSE           # ãƒ©ã‚¤ã‚»ãƒ³ã‚¹æƒ…å ±
 ```
 
-## ?? ƒJƒXƒ^ƒ}ƒCƒY
+##  ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚º
 
-### “ïˆÕ“x‚Ì’Ç‰Á
-JavaScriptƒR[ƒh“à‚Ì`difficulties`ƒIƒuƒWƒFƒNƒg‚ð•ÒWF
+### é›£æ˜“åº¦ã®è¿½åŠ 
+JavaScriptã‚³ãƒ¼ãƒ‰å†…ã®`difficulties`ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç·¨é›†ï¼š
 
 ```javascript
 const difficulties = {
     easy: { rows: 9, cols: 9, mines: 10 },
     medium: { rows: 16, cols: 16, mines: 40 },
     hard: { rows: 16, cols: 30, mines: 99 },
-    custom: { rows: 20, cols: 20, mines: 50 } // ƒJƒXƒ^ƒ€“ïˆÕ“x
+    custom: { rows: 20, cols: 20, mines: 50 } // ã‚«ã‚¹ã‚¿ãƒ é›£æ˜“åº¦
 };
 ```
 
-### ƒXƒ^ƒCƒ‹‚Ì•ÏX
-CSSƒZƒNƒVƒ‡ƒ“‚ÅƒfƒUƒCƒ“‚ðƒJƒXƒ^ƒ}ƒCƒY‚Å‚«‚Ü‚·B
+### ã‚¹ã‚¿ã‚¤ãƒ«ã®å¤‰æ›´
+CSSã‚»ã‚¯ã‚·ãƒ§ãƒ³ã§ãƒ‡ã‚¶ã‚¤ãƒ³ã‚’ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚ºã§ãã¾ã™ã€‚
 
-## ? Šù’m‚Ì–â‘èE§ŒÀ
+##  æ—¢çŸ¥ã®å•é¡Œãƒ»åˆ¶é™
 
-- ”ñí‚É‘å‚«‚Èƒ{[ƒhi50~50ˆÈãj‚Å‚Í“®ì‚ªd‚­‚È‚é‰Â”\«‚ª‚ ‚è‚Ü‚·
-- ˆê•”‚ÌŒÃ‚¢ƒuƒ‰ƒEƒU‚Å‚Í•\Ž¦‚ª•ö‚ê‚éê‡‚ª‚ ‚è‚Ü‚·
+- éžå¸¸ã«å¤§ããªãƒœãƒ¼ãƒ‰ï¼ˆ50Ã—50ä»¥ä¸Šï¼‰ã§ã¯å‹•ä½œãŒé‡ããªã‚‹å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™
+- ä¸€éƒ¨ã®å¤ã„ãƒ–ãƒ©ã‚¦ã‚¶ã§ã¯è¡¨ç¤ºãŒå´©ã‚Œã‚‹å ´åˆãŒã‚ã‚Šã¾ã™
 
-## ? vŒ£EƒtƒB[ƒhƒoƒbƒN
+##  è²¢çŒ®ãƒ»ãƒ•ã‚£ãƒ¼ãƒ‰ãƒãƒƒã‚¯
 
-ƒoƒO•ñ‚â‹@”\’Ç‰Á‚Ì’ñˆÄ‚ÍAGitHub‚ÌIssue‚Ü‚½‚ÍPull Request‚Å‚¨‹CŒy‚É‚¨Šñ‚¹‚­‚¾‚³‚¢B
+ãƒã‚°å ±å‘Šã‚„æ©Ÿèƒ½è¿½åŠ ã®ææ¡ˆã¯ã€GitHubã®Issueã¾ãŸã¯Pull Requestã§ãŠæ°—è»½ã«ãŠå¯„ã›ãã ã•ã„ã€‚
 
-## ? ƒ‰ƒCƒZƒ“ƒX
+##  ãƒ©ã‚¤ã‚»ãƒ³ã‚¹
 
-‚±‚ÌƒvƒƒWƒFƒNƒg‚ÍMITƒ‰ƒCƒZƒ“ƒX‚Ì‰º‚ÅŒöŠJ‚³‚ê‚Ä‚¢‚Ü‚·B
+ã“ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã¯MITãƒ©ã‚¤ã‚»ãƒ³ã‚¹ã®ä¸‹ã§å…¬é–‹ã•ã‚Œã¦ã„ã¾ã™ã€‚
 
-## ? Šy‚µ‚Ý•û‚ÌƒRƒc
+##  æ¥½ã—ã¿æ–¹ã®ã‚³ãƒ„
 
-1. **Šp‚©‚çŽn‚ß‚é** - Šp‚ÌƒZƒ‹‚Íî•ñ‚ª‘½‚¢‚Ì‚ÅˆÀ‘S
-2. **”Žš‚ðŠˆ—p** - ŠJ‚¢‚½ƒZƒ‹‚Ì”Žš‚ÆŽüˆÍ‚Ìƒtƒ‰ƒO”‚ð”äŠr
-3. **ƒpƒ^[ƒ“‚ðŠo‚¦‚é** - ‚æ‚­‚ ‚é”z’uƒpƒ^[ƒ“‚ðŠo‚¦‚é‚Æã’B‚ª‘‚¢
-4. **Å‚ç‚È‚¢** - ŽžŠÔ‚ð‹C‚É‚¹‚¸AŠmŽÀ‚ÉˆÀ‘S‚ÈƒZƒ‹‚©‚çŠJ‚­
+1. **è§’ã‹ã‚‰å§‹ã‚ã‚‹** - è§’ã®ã‚»ãƒ«ã¯æƒ…å ±ãŒå¤šã„ã®ã§å®‰å…¨
+2. **æ•°å­—ã‚’æ´»ç”¨** - é–‹ã„ãŸã‚»ãƒ«ã®æ•°å­—ã¨å‘¨å›²ã®ãƒ•ãƒ©ã‚°æ•°ã‚’æ¯”è¼ƒ
+3. **ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’è¦šãˆã‚‹** - ã‚ˆãã‚ã‚‹é…ç½®ãƒ‘ã‚¿ãƒ¼ãƒ³ã‚’è¦šãˆã‚‹ã¨ä¸Šé”ãŒæ—©ã„
+4. **ç„¦ã‚‰ãªã„** - æ™‚é–“ã‚’æ°—ã«ã›ãšã€ç¢ºå®Ÿã«å®‰å…¨ãªã‚»ãƒ«ã‹ã‚‰é–‹ã
 
-Šy‚µ‚¢ƒ}ƒCƒ“ƒXƒC[ƒp[ƒ‰ƒCƒt‚ðI??
+æ¥½ã—ã„ãƒžã‚¤ãƒ³ã‚¹ã‚¤ãƒ¼ãƒ‘ãƒ¼ãƒ©ã‚¤ãƒ•ã‚’ï¼
