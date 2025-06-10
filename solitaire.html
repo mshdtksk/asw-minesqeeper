@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ソリティア</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #076324;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stock-waste {
+            display: flex;
+            gap: 20px;
+        }
+
+        .foundations {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tableau {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .card-pile {
+            width: 100px;
+            height: 140px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .tableau-pile {
+            min-height: 200px;
+        }
+
+        .card {
+            width: 90px;
+            height: 130px;
+            background-color: white;
+            border-radius: 8px;
+            position: absolute;
+            cursor: pointer;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: black;
+            user-select: none;
+        }
+
+        .card.red {
+            color: red;
+        }
+
+        .card-back {
+            background-color: #1a4b8c;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 20px, rgba(255, 255, 255, 0.1) 20px);
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1a4b8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        button:hover {
+            background-color: #2a5b9c;
+        }
+
+        .dragging {
+            opacity: 0.8;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>ソリティア</h1>
+
+        <div class="game-area">
+            <div class="top-row">
+                <div class="stock-waste">
+                    <div class="card-pile" id="stock"></div>
+                    <div class="card-pile" id="waste"></div>
+                </div>
+
+                <div class="foundations">
+                    <div class="card-pile" id="foundation1"></div>
+                    <div class="card-pile" id="foundation2"></div>
+                    <div class="card-pile" id="foundation3"></div>
+                    <div class="card-pile" id="foundation4"></div>
+                </div>
+            </div>
+
+            <div class="tableau">
+                <div class="card-pile tableau-pile" id="tableau1"></div>
+                <div class="card-pile tableau-pile" id="tableau2"></div>
+                <div class="card-pile tableau-pile" id="tableau3"></div>
+                <div class="card-pile tableau-pile" id="tableau4"></div>
+                <div class="card-pile tableau-pile" id="tableau5"></div>
+                <div class="card-pile tableau-pile" id="tableau6"></div>
+                <div class="card-pile tableau-pile" id="tableau7"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="new-game">新しいゲーム</button>
+            <button id="undo">元に戻す</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // カードのスート（マーク）と値
+            const suits = ['♥', '♦', '♠', '♣'];
+            const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+            // ゲームの状態
+            let deck = [];
+            let stock = [];
+            let waste = [];
+            let foundations = [[], [], [], []];
+            let tableau = [[], [], [], [], [], [], []];
+            let moveHistory = [];
+
+            // ドラッグ関連の変数
+            let isDragging = false;
+            let draggedCard = null;
+            let draggedPile = null;
+            let draggedCards = [];
+            let startX, startY, originalX, originalY;
+
+            // 新しいゲームを開始
+            function newGame() {
+                // デッキを初期化
+                deck = [];
+                for (let suit of suits) {
+                    for (let value of values) {
+                        deck.push({
+                            suit: suit,
+                            value: value,
+                            color: (suit === '♥' || suit === '♦') ? 'red' : 'black',
+                            faceUp: false
+                        });
+                    }
+                }
+
+                // デッキをシャッフル
+                shuffleDeck();
+
+                // ゲームの状態をリセット
+                stock = [...deck];
+                waste = [];
+                foundations = [[], [], [], []];
+                tableau = [[], [], [], [], [], [], []];
+                moveHistory = [];
+
+                // タブローにカードを配る
+                for (let i = 0; i < 7; i++) {
+                    for (let j = 0; j <= i; j++) {
+                        const card = stock.pop();
+                        if (j === i) {
+                            card.faceUp = true;
+                        }
+                        tableau[i].push(card);
+                    }
+                }
+
+                // ゲームボードを描画
+                renderGame();
+            }
+
+            // デッキをシャッフル
+            function shuffleDeck() {
+                for (let i = deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [deck[i], deck[j]] = [deck[j], deck[i]];
+                }
+            }
+
+            // ゲームボードを描画
+            function renderGame() {
+                // ストックを描画
+                const stockElement = document.getElementById('stock');
+                stockElement.innerHTML = '';
+                if (stock.length > 0) {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'card card-back';
+                    stockElement.appendChild(cardElement);
+
+                    // ストックをクリックしたときのイベント
+                    cardElement.addEventListener('click', drawCard);
+                }
+
+                // 捨て札を描画
+                const wasteElement = document.getElementById('waste');
+                wasteElement.innerHTML = '';
+                if (waste.length > 0) {
+                    const topCard = waste[waste.length - 1];
+                    const cardElement = createCardElement(topCard);
+                    cardElement.style.position = 'absolute';
+                    wasteElement.appendChild(cardElement);
+
+                    // ドラッグイベントを設定
+                    setupDragEvents(cardElement, 'waste', waste.length - 1);
+                }
+
+                // ファウンデーションを描画
+                for (let i = 0; i < 4; i++) {
+                    const foundationElement = document.getElementById(`foundation${i + 1}`);
+                    foundationElement.innerHTML = '';
+
+                    if (foundations[i].length > 0) {
+                        const topCard = foundations[i][foundations[i].length - 1];
+                        const cardElement = createCardElement(topCard);
+                        cardElement.style.position = 'absolute';
+                        foundationElement.appendChild(cardElement);
+                    }
+
+                    // ドロップイベントを設定
+                    setupDropZone(foundationElement, 'foundation', i);
+                }
+
+                // タブローを描画
+                for (let i = 0; i < 7; i++) {
+                    const tableauElement = document.getElementById(`tableau${i + 1}`);
+                    tableauElement.innerHTML = '';
+
+                    for (let j = 0; j < tableau[i].length; j++) {
+                        const card = tableau[i][j];
+                        if (card.faceUp) {
+                            const cardElement = createCardElement(card);
+                            cardElement.style.position = 'absolute';
+                            cardElement.style.top = `${j * 25}px`;
+                            tableauElement.appendChild(cardElement);
+
+                            // ドラッグイベントを設定
+                            setupDragEvents(cardElement, 'tableau', i, j);
+                        } else {
+                            const cardElement = document.createElement('div');
+                            cardElement.className = 'card card-back';
+                            cardElement.style.position = 'absolute';
+                            cardElement.style.top = `${j * 25}px`;
+                            tableauElement.appendChild(cardElement);
+                        }
+                    }
+
+                    // ドロップイベントを設定
+                    setupDropZone(tableauElement, 'tableau', i);
+                }
+            }
+
+            // カード要素を作成
+            function createCardElement(card) {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.color}`;
+                cardElement.textContent = `${card.value}${card.suit}`;
+                return cardElement;
+            }
+
+            // ドラッグイベントを設定
+            function setupDragEvents(element, source, pileIndex, cardIndex = null) {
+                element.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    originalX = element.offsetLeft;
+                    originalY = element.offsetTop;
+
+                    isDragging = true;
+
+                    if (source === 'waste') {
+                        draggedCard = waste[pileIndex];
+                        draggedPile = 'waste';
+                        draggedCards = [draggedCard];
+                    } else if (source === 'tableau') {
+                        // タブローからは複数のカードをドラッグできる
+                        draggedPile = 'tableau';
+                        draggedCards = tableau[pileIndex].slice(cardIndex);
+
+                        // ドラッグ中のカードを視覚的に表現
+                        const dragGroup = document.createElement('div');
+                        dragGroup.className = 'drag-group';
+                        dragGroup.style.position = 'absolute';
+                        dragGroup.style.left = `${originalX}px`;
+                        dragGroup.style.top = `${originalY}px`;
+
+                        for (let i = 0; i < draggedCards.length; i++) {
+                            const card = draggedCards[i];
+                            const cardElem = createCardElement(card);
+                            cardElem.style.position = 'absolute';
+                            cardElem.style.top = `${i * 25}px`;
+                            dragGroup.appendChild(cardElem);
+                        }
+
+                        document.body.appendChild(dragGroup);
+                        element.classList.add('dragging');
+                    }
+
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                });
+            }
+
+            // マウス移動時のイベント
+            function onMouseMove(e) {
+                if (!isDragging) return;
+
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                const dragElements = document.querySelectorAll('.dragging');
+                dragElements.forEach(el => {
+                    el.style.left = `${originalX + dx}px`;
+                    el.style.top = `${originalY + dy}px`;
+                });
+            }
+
+            // マウスアップ時のイベント
+            function onMouseUp(e) {
+                if (!isDragging) return;
+
+                isDragging = false;
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                // ドロップ先を判定
+                const dropTarget = getDropTarget(e.clientX, e.clientY);
+
+                if (dropTarget) {
+                    // カードの移動を試みる
+                    moveCards(draggedPile, draggedCards, dropTarget.type, dropTarget.index);
+                }
+
+                // ドラッグ要素をクリーンアップ
+                const dragElements = document.querySelectorAll('.dragging');
+                dragElements.forEach(el => el.remove());
+
+                // ゲームボードを再描画
+                renderGame();
+            }
+
+            // ドロップ先を取得
+            function getDropTarget(x, y) {
+                // ファウンデーションのチェック
+                for (let i = 0; i < 4; i++) {
+                    const element = document.getElementById(`foundation${i + 1}`);
+                    const rect = element.getBoundingClientRect();
+
+                    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                        return { type: 'foundation', index: i };
+                    }
+                }
+
+                // タブローのチェック
+                for (let i = 0; i < 7; i++) {
+                    const element = document.getElementById(`tableau${i + 1}`);
+                    const rect = element.getBoundingClientRect();
+
+                    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                        return { type: 'tableau', index: i };
+                    }
+                }
+
+                return null;
+            }
+
+            // ドロップゾーンを設定
+            function setupDropZone(element, type, index) {
+                element.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                });
+
+                element.addEventListener('drop', function(e) {
+                    e.preventDefault();
+
+                    if (isDragging && draggedCards.length > 0) {
+                        moveCards(draggedPile, draggedCards, type, index);
+                        isDragging = false;
+                        renderGame();
+                    }
+                });
+            }
+
+            // カードを移動
+            function moveCards(fromType, cards, toType, toIndex) {
+                // 移動前の状態を保存
+                const gameState = {
+                    stock: [...stock],
+                    waste: [...waste],
+                    foundations: foundations.map(f => [...f]),
+                    tableau: tableau.map(t => [...t])
+                };
+
+                let validMove = false;
+
+                if (fromType === 'waste' && cards.length === 1) {
+                    const card = cards[0];
+
+                    if (toType === 'foundation') {
+                        // ウェイストからファウンデーションへの移動
+                        validMove = canMoveToFoundation(card, foundations[toIndex]);
+
+                        if (validMove) {
+                            waste.pop();
+                            foundations[toIndex].push(card);
+                        }
+                    } else if (toType === 'tableau') {
+                        // ウェイストからタブローへの移動
+                        validMove = canMoveToTableau(card, tableau[toIndex]);
+
+                        if (validMove) {
+                            waste.pop();
+                            tableau[toIndex].push(card);
+                        }
+                    }
+                } else if (fromType === 'tableau') {
+                    if (toType === 'foundation' && cards.length === 1) {
+                        // タブローからファウンデーションへの移動（1枚のみ）
+                        const card = cards[0];
+                        validMove = canMoveToFoundation(card, foundations[toIndex]);
+
+                        if (validMove) {
+                            // 元のタブローから削除
+                            for (let i = 0; i < 7; i++) {
+                                if (tableau[i].includes(card)) {
+                                    tableau[i].splice(tableau[i].indexOf(card));
+
+                                    // 残ったカードの一番上をめくる
+                                    if (tableau[i].length > 0 && !tableau[i][tableau[i].length - 1].faceUp) {
+                                        tableau[i][tableau[i].length - 1].faceUp = true;
+                                    }
+                                    break;
+                                }
+                            }
+
+                            foundations[toIndex].push(card);
+                        }
+                    } else if (toType === 'tableau') {
+                        // タブローからタブローへの移動
+                        const firstCard = cards[0];
+                        validMove = canMoveToTableau(firstCard, tableau[toIndex]);
+
+                        if (validMove) {
+                            // 元のタブローから削除
+                            for (let i = 0; i < 7; i++) {
+                                if (tableau[i].includes(firstCard)) {
+                                    const index = tableau[i].indexOf(firstCard);
+                                    tableau[i].splice(index);
+
+                                    // 残ったカードの一番上をめくる
+                                    if (tableau[i].length > 0 && !tableau[i][tableau[i].length - 1].faceUp) {
+                                        tableau[i][tableau[i].length - 1].faceUp = true;
+                                    }
+                                    break;
+                                }
+                            }
+
+                            // 新しいタブローに追加
+                            tableau[toIndex] = [...tableau[toIndex], ...cards];
+                        }
+                    }
+                }
+
+                if (validMove) {
+                    moveHistory.push(gameState);
+                }
+
+                return validMove;
+            }
+
+            // ファウンデーションに移動できるかチェック
+            function canMoveToFoundation(card, foundation) {
+                if (foundation.length === 0) {
+                    // 空のファウンデーションにはAのみ置ける
+                    return card.value === 'A';
+                } else {
+                    const topCard = foundation[foundation.length - 1];
+
+                    // 同じスートで連続した値のカードのみ置ける
+                    return card.suit === topCard.suit &&
+                           values.indexOf(card.value) === values.indexOf(topCard.value) + 1;
+                }
+            }
+
+            // タブローに移動できるかチェック
+            function canMoveToTableau(card, tableauPile) {
+                if (tableauPile.length === 0) {
+                    // 空のタブローにはKのみ置ける
+                    return card.value === 'K';
+                } else {
+                    const topCard = tableauPile[tableauPile.length - 1];
+
+                    // 異なる色で連続した値（降順）のカードのみ置ける
+                    return card.color !== topCard.color &&
+                           values.indexOf(card.value) === values.indexOf(topCard.value) - 1;
+                }
+            }
+
+            // カードを引く
+            function drawCard() {
+                if (stock.length === 0) {
+                    // ストックが空の場合、ウェイストからカードを戻す
+                    if (waste.length > 0) {
+                        stock = waste.reverse();
+                        waste = [];
+
+                        // カードを裏返す
+                        for (let card of stock) {
+                            card.faceUp = false;
+                        }
+                    }
+                } else {
+                    // ストックからカードを1枚引く
+                    const card = stock.pop();
+                    card.faceUp = true;
+                    waste.push(card);
+                }
+
+                renderGame();
+            }
+
+            // 元に戻す
+            function undo() {
+                if (moveHistory.length > 0) {
+                    const previousState = moveHistory.pop();
+                    stock = previousState.stock;
+                    waste = previousState.waste;
+                    foundations = previousState.foundations;
+                    tableau = previousState.tableau;
+
+                    renderGame();
+                }
+            }
+
+            // イベントリスナーを設定
+            document.getElementById('new-game').addEventListener('click', newGame);
+            document.getElementById('undo').addEventListener('click', undo);
+
+            // ゲームを開始
+            newGame();
+        });
+    </script>
+</body>
+</html>
