@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>巡回セールスマン問題クイズ (スタンドアロン版)</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .panel {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .panel h2 {
+            margin-top: 0;
+            color: #3498db;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            background-color: white;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background-color: white;
+        }
+        .option:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+        }
+        .option.selected {
+            border-color: #2ecc71;
+            background-color: #d5f5e3;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+        }
+        .option.correct {
+            border-color: #2ecc71;
+            background-color: #d5f5e3;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+        }
+        .option.incorrect {
+            border-color: #e74c3c;
+            background-color: #fadbd8;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+        .option-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .option-canvas {
+            margin: 10px auto;
+            display: block;
+        }
+        .route-text {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
+        }
+        .hidden {
+            display: none;
+        }
+        .result {
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .correct-result {
+            background-color: #d5f5e3;
+            color: #27ae60;
+        }
+        .incorrect-result {
+            background-color: #fadbd8;
+            color: #c0392b;
+        }
+        .route-results {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .route-result-item {
+            margin: 8px 0;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .route-result-correct {
+            background-color: #d5f5e3;
+            font-weight: bold;
+        }
+        .route-result-selected {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .city-list {
+            margin: 10px 0;
+        }
+        .city-item {
+            margin-bottom: 5px;
+        }
+        .quiz-main-canvas {
+            display: block;
+            margin: 0 auto;
+        }
+        .difficulty-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .computation-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>巡回セールスマン問題クイズ</h1>
+
+    <div class="container">
+        <div class="panel" id="setup-panel">
+            <h2>都市の設定</h2>
+            <div class="input-group">
+                <button id="random-cities">ランダムな都市を生成</button>
+                <div class="input-group" id="random-cities-form">
+                    <label for="num-cities">都市の数:</label>
+                    <input type="number" id="num-cities" min="3" max="15" value="10">
+
+                    <label for="max-coord">座標の最大値:</label>
+                    <input type="number" id="max-coord" min="10" max="1000" value="100">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <button id="manual-cities">都市を手動で入力</button>
+                <div class="input-group hidden" id="manual-cities-form">
+                    <label for="manual-num-cities">都市の数:</label>
+                    <input type="number" id="manual-num-cities" min="3" max="15" value="10">
+                    <button id="generate-city-inputs">入力フォームを生成</button>
+
+                    <div id="city-inputs" class="hidden">
+                        <!-- 都市の入力フォームがここに動的に生成される -->
+                    </div>
+                    <button id="submit-manual-cities" class="hidden">都市を確定</button>
+                </div>
+            </div>
+
+            <div id="city-display" class="hidden">
+                <h3>設定された都市</h3>
+                <canvas id="city-canvas" width="400" height="400"></canvas>
+                <div class="city-list" id="city-list">
+                    <!-- 都市のリストがここに表示される -->
+                </div>
+                <button id="start-quiz">クイズを開始</button>
+            </div>
+        </div>
+
+        <div class="panel hidden" id="quiz-panel">
+            <h2>クイズ</h2>
+            <p>以下の都市を訪問する最短ルートはどれでしょうか？</p>
+
+            <canvas id="quiz-canvas" class="quiz-main-canvas" width="500" height="400"></canvas>
+
+            <div class="options" id="route-options">
+                <!-- 選択肢がここに動的に生成される -->
+            </div>
+
+            <button id="submit-answer" class="hidden">回答する</button>
+
+            <div id="result" class="result hidden">
+                <!-- 結果がここに表示される -->
+            </div>
+
+            <button id="new-quiz" class="hidden">新しいクイズ</button>
+            <button id="back-to-setup" class="hidden">都市の設定に戻る</button>
+        </div>
+    </div>
+
+    <script>
+        // グローバル変数
+        let cities = [];
+        let correctRoute = [];
+        let allRoutes = [];
+        let allDistances = [];
+        let correctIndex = -1;
+        let selectedOptionIndex = -1;
+        let isExactSolution = false;
+
+        // DOM要素の取得
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM読み込み完了');
+
+            // ランダム都市生成関連
+            const randomCitiesBtn = document.getElementById('random-cities');
+            const numCitiesInput = document.getElementById('num-cities');
+            const maxCoordInput = document.getElementById('max-coord');
+
+            // 手動入力関連
+            const manualCitiesBtn = document.getElementById('manual-cities');
+            const manualCitiesForm = document.getElementById('manual-cities-form');
+            const manualNumCitiesInput = document.getElementById('manual-num-cities');
+            const generateCityInputsBtn = document.getElementById('generate-city-inputs');
+            const cityInputsDiv = document.getElementById('city-inputs');
+            const submitManualCitiesBtn = document.getElementById('submit-manual-cities');
+
+            // 都市表示関連
+            const cityDisplayDiv = document.getElementById('city-display');
+            const cityCanvas = document.getElementById('city-canvas');
+            const cityListDiv = document.getElementById('city-list');
+            const startQuizBtn = document.getElementById('start-quiz');
+
+            // クイズ関連
+            const setupPanel = document.getElementById('setup-panel');
+            const quizPanel = document.getElementById('quiz-panel');
+            const quizCanvas = document.getElementById('quiz-canvas');
+            const routeOptionsDiv = document.getElementById('route-options');
+            const submitAnswerBtn = document.getElementById('submit-answer');
+            const resultDiv = document.getElementById('result');
+            const newQuizBtn = document.getElementById('new-quiz');
+            const backToSetupBtn = document.getElementById('back-to-setup');
+
+            // イベントリスナーの設定
+            randomCitiesBtn.addEventListener('click', generateRandomCities);
+            manualCitiesBtn.addEventListener('click', () => {
+                manualCitiesForm.classList.toggle('hidden');
+            });
+            generateCityInputsBtn.addEventListener('click', generateCityInputs);
+            submitManualCitiesBtn.addEventListener('click', submitManualCities);
+            startQuizBtn.addEventListener('click', startQuiz);
+            submitAnswerBtn.addEventListener('click', submitAnswer);
+            newQuizBtn.addEventListener('click', startQuiz);
+            backToSetupBtn.addEventListener('click', backToSetup);
+        });
+
+        /**
+         * ランダムな都市を生成する
+         */
+        function generateRandomCities() {
+            const numCities = parseInt(document.getElementById('num-cities').value);
+            const maxCoord = parseInt(document.getElementById('max-coord').value);
+
+            if (isNaN(numCities) || numCities < 3 || numCities > 15) {
+                alert('都市の数は3から15の間で指定してください。');
+                return;
+            }
+
+            if (isNaN(maxCoord) || maxCoord < 10 || maxCoord > 1000) {
+                alert('座標の最大値は10から1000の間で指定してください。');
+                return;
+            }
+
+            cities = [];
+            for (let i = 0; i < numCities; i++) {
+                const x = Math.random() * maxCoord;
+                const y = Math.random() * maxCoord;
+                cities.push({ x, y });
+            }
+
+            displayCities();
+        }
+
+        /**
+         * 都市の入力フォームを生成する
+         */
+        function generateCityInputs() {
+            const numCities = parseInt(document.getElementById('manual-num-cities').value);
+
+            if (isNaN(numCities) || numCities < 3 || numCities > 15) {
+                alert('都市の数は3から15の間で指定してください。');
+                return;
+            }
+
+            const cityInputsDiv = document.getElementById('city-inputs');
+            cityInputsDiv.innerHTML = '';
+
+            for (let i = 0; i < numCities; i++) {
+                const cityDiv = document.createElement('div');
+                cityDiv.className = 'city-input';
+
+                const label = document.createElement('label');
+                label.textContent = '都市 ' + (i + 1) + ':';
+                cityDiv.appendChild(label);
+
+                const xInput = document.createElement('input');
+                xInput.type = 'number';
+                xInput.placeholder = 'X座標';
+                xInput.id = 'city-' + i + '-x';
+                cityDiv.appendChild(xInput);
+
+                const yInput = document.createElement('input');
+                yInput.type = 'number';
+                yInput.placeholder = 'Y座標';
+                yInput.id = 'city-' + i + '-y';
+                cityDiv.appendChild(yInput);
+
+                cityInputsDiv.appendChild(cityDiv);
+            }
+
+            cityInputsDiv.classList.remove('hidden');
+            document.getElementById('submit-manual-cities').classList.remove('hidden');
+        }
+
+        /**
+         * 手動入力された都市を確定する
+         */
+        function submitManualCities() {
+            const numCities = parseInt(document.getElementById('manual-num-cities').value);
+            cities = [];
+
+            for (let i = 0; i < numCities; i++) {
+                const x = parseFloat(document.getElementById('city-' + i + '-x').value);
+                const y = parseFloat(document.getElementById('city-' + i + '-y').value);
+
+                if (isNaN(x) || isNaN(y)) {
+                    alert('都市 ' + (i + 1) + ' の座標が正しく入力されていません。');
+                    return;
+                }
+
+                cities.push({ x, y });
+            }
+
+            displayCities();
+        }
+
+        /**
+         * 都市を表示する
+         */
+        function displayCities() {
+            const cityDisplayDiv = document.getElementById('city-display');
+            const cityCanvas = document.getElementById('city-canvas');
+            const cityListDiv = document.getElementById('city-list');
+
+            // 都市リストを表示
+            cityListDiv.innerHTML = '';
+            cities.forEach((city, i) => {
+                const cityItem = document.createElement('div');
+                cityItem.className = 'city-item';
+                cityItem.textContent = '都市 ' + (i + 1) + ': (' + city.x.toFixed(2) + ', ' + city.y.toFixed(2) + ')';
+                cityListDiv.appendChild(cityItem);
+            });
+
+            // キャンバスに都市を描画
+            drawCities(cityCanvas, cities);
+
+            cityDisplayDiv.classList.remove('hidden');
+        }
+
+        /**
+         * キャンバスに都市を描画する
+         */
+        function drawCities(canvas, cityList) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // キャンバスをクリア
+            ctx.clearRect(0, 0, width, height);
+
+            // 座標の最大値を取得
+            let maxX = 0;
+            let maxY = 0;
+            cityList.forEach(city => {
+                maxX = Math.max(maxX, city.x);
+                maxY = Math.max(maxY, city.y);
+            });
+
+            // スケーリング係数を計算（余白を考慮）
+            const margin = 20;
+            const scaleX = (width - 2 * margin) / (maxX || 1); // 0除算を防止
+            const scaleY = (height - 2 * margin) / (maxY || 1); // 0除算を防止
+            const scale = Math.min(scaleX, scaleY);
+
+            // 都市を描画
+            cityList.forEach((city, i) => {
+                const x = margin + city.x * scale;
+                const y = height - (margin + city.y * scale); // Y軸は下から上に
+
+                // 都市を円で描画
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = '#3498db';
+                ctx.fill();
+                ctx.strokeStyle = '#2980b9';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // 都市番号を表示
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, x, y);
+            });
+        }
+
+        /**
+         * ルートを描画する
+         */
+        function drawRoute(canvas, cityList, route) {
+            // まず都市を描画
+            drawCities(canvas, cityList);
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // 座標の最大値を取得
+            let maxX = 0;
+            let maxY = 0;
+            cityList.forEach(city => {
+                maxX = Math.max(maxX, city.x);
+                maxY = Math.max(maxY, city.y);
+            });
+
+            // スケーリング係数を計算（余白を考慮）
+            const margin = 20;
+            const scaleX = (width - 2 * margin) / (maxX || 1); // 0除算を防止
+            const scaleY = (height - 2 * margin) / (maxY || 1); // 0除算を防止
+            const scale = Math.min(scaleX, scaleY);
+
+            // ルートを描画
+            ctx.beginPath();
+            const firstCity = cityList[route[0]];
+            const startX = margin + firstCity.x * scale;
+            const startY = height - (margin + firstCity.y * scale);
+            ctx.moveTo(startX, startY);
+
+            for (let i = 1; i < route.length; i++) {
+                const city = cityList[route[i]];
+                const x = margin + city.x * scale;
+                const y = height - (margin + city.y * scale);
+                ctx.lineTo(x, y);
+            }
+
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // 矢印を描画してルートの方向を示す
+            drawRouteArrows(ctx, cityList, route, scale, margin, height);
+        }
+
+        /**
+         * ルートに矢印を描画する
+         */
+        function drawRouteArrows(ctx, cityList, route, scale, margin, canvasHeight) {
+            ctx.fillStyle = '#c0392b';
+            
+            for (let i = 0; i < route.length - 1; i++) {
+                const fromCity = cityList[route[i]];
+                const toCity = cityList[route[i + 1]];
+                
+                const fromX = margin + fromCity.x * scale;
+                const fromY = canvasHeight - (margin + fromCity.y * scale);
+                const toX = margin + toCity.x * scale;
+                const toY = canvasHeight - (margin + toCity.y * scale);
+                
+                // 矢印の位置（線の中点よりも目的地寄り）
+                const ratio = 0.7;
+                const arrowX = fromX + (toX - fromX) * ratio;
+                const arrowY = fromY + (toY - fromY) * ratio;
+                
+                // 矢印の角度
+                const angle = Math.atan2(toY - fromY, toX - fromX);
+                
+                // 矢印を描画
+                const arrowSize = 8;
+                ctx.save();
+                ctx.translate(arrowX, arrowY);
+                ctx.rotate(angle);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-arrowSize, -arrowSize/2);
+                ctx.lineTo(-arrowSize, arrowSize/2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        /**
+         * 2点間の距離を計算する
+         */
+        function calculateDistance(city1, city2) {
+            const dx = city2.x - city1.x;
+            const dy = city2.y - city1.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        /**
+         * 距離行列を計算する
+         */
+        function calculateDistanceMatrix(cityList) {
+            const n = cityList.length;
+            const distances = Array(n).fill().map(() => Array(n).fill(0));
+
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    if (i !== j) {
+                        distances[i][j] = calculateDistance(cityList[i], cityList[j]);
+                    }
+                }
+            }
+
+            return distances;
+        }
+
+        /**
+         * ルートの総距離を計算する
+         */
+        function calculateRouteDistance(cityList, route) {
+            const distances = calculateDistanceMatrix(cityList);
+            let totalDistance = 0;
+
+            for (let i = 0; i < route.length - 1; i++) {
+                totalDistance += distances[route[i]][route[i+1]];
+            }
+
+            return totalDistance;
+        }
+
+        /**
+         * 全ての可能なルートを生成する（厳密解用）
+         */
+        function generateAllRoutes(cityList) {
+            const n = cityList.length;
+            const startCity = 0; // 最初の都市を固定
+            
+            console.log('全順列生成中... (' + (n-1) + '! = ' + factorial(n-1) + ' 通り)');
+            
+            // 残りの都市の全ての順列を生成
+            const remainingCities = [];
+            for (let i = 1; i < n; i++) {
+                remainingCities.push(i);
+            }
+            
+            const permutations = [];
+            
+            function permute(arr, start = 0) {
+                if (start === arr.length - 1) {
+                    permutations.push([...arr]);
+                    return;
+                }
+                
+                for (let i = start; i < arr.length; i++) {
+                    [arr[start], arr[i]] = [arr[i], arr[start]];
+                    permute(arr, start + 1);
+                    [arr[start], arr[i]] = [arr[i], arr[start]];
+                }
+            }
+            
+            permute(remainingCities);
+            
+            // 各順列を完全なルートに変換
+            const allRoutes = permutations.map(perm => {
+                return [startCity, ...perm, startCity];
+            });
+            
+            console.log('全順列生成完了: ' + allRoutes.length + ' 通り');
+            return allRoutes;
+        }
+
+        /**
+         * 階乗を計算する
+         */
+        function factorial(n) {
+            if (n <= 1) return 1;
+            return n * factorial(n - 1);
+        }
+
+        /**
+         * 最近傍法でルートを計算する
+         */
+        function nearestNeighbor(cityList, startCity = 0) {
+            const n = cityList.length;
+            const distances = calculateDistanceMatrix(cityList);
+
+            const unvisited = new Set();
+            for (let i = 0; i < n; i++) {
+                if (i !== startCity) {
+                    unvisited.add(i);
+                }
+            }
+
+            const tour = [startCity];
+            let current = startCity;
+            let totalDistance = 0;
+
+            while (unvisited.size > 0) {
+                let nearest = -1;
+                let minDistance = Infinity;
+
+                for (const city of unvisited) {
+                    const distance = distances[current][city];
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearest = city;
+                    }
+                }
+
+                unvisited.delete(nearest);
+                tour.push(nearest);
+                totalDistance += minDistance;
+                current = nearest;
+            }
+
+            // 出発点に戻る
+            totalDistance += distances[current][startCity];
+            tour.push(startCity);
+
+            return { tour, totalDistance };
+        }
+
+        /**
+         * 2-opt法でルートを改善する
+         */
+        function twoOpt(cityList, initialTour, maxIterations = 1000) {
+            const n = cityList.length;
+            const distances = calculateDistanceMatrix(cityList);
+
+            let bestTour = [...initialTour];
+            let improved = true;
+            let iteration = 0;
+
+            while (improved && iteration < maxIterations) {
+                improved = false;
+                iteration++;
+
+                for (let i = 1; i < bestTour.length - 2; i++) {
+                    for (let j = i + 1; j < bestTour.length - 1; j++) {
+                        // 2-opt交換: (i-1,i)と(j,j+1)のエッジを(i-1,j)と(i,j+1)に置き換える
+                        const delta = distances[bestTour[i-1]][bestTour[j]] + distances[bestTour[i]][bestTour[j+1]]
+                                    - distances[bestTour[i-1]][bestTour[i]] - distances[bestTour[j]][bestTour[j+1]];
+
+                        if (delta < 0) {
+                            // 改善される場合は交換
+                            bestTour = [...bestTour.slice(0, i), ...bestTour.slice(i, j+1).reverse(), ...bestTour.slice(j+1)];
+                            improved = true;
+                            break;
+                        }
+                    }
+                    if (improved) break;
+                }
+            }
+
+            // 総距離を計算
+            let totalDistance = 0;
+            for (let i = 0; i < bestTour.length - 1; i++) {
+                totalDistance += distances[bestTour[i]][bestTour[i+1]];
+            }
+
+            return { tour: bestTour, totalDistance };
+        }
+
+        /**
+         * 高品質なルートを生成する（近似解用）
+         */
+        function generateHighQualityRoutes(cityList, numRoutes = 3000) {
+            const n = cityList.length;
+            const routes = [];
+            const routeSet = new Set();
+            
+            console.log('高品質ルート生成中... (目標: ' + numRoutes + ' 通り)');
+            
+            // 1. 各都市を開始点とした最近傍法
+            for (let startFrom = 0; startFrom < n; startFrom++) {
+                const { tour } = nearestNeighbor(cityList, startFrom);
+                const normalizedTour = normalizeTour(tour, 0);
+                const routeKey = normalizedTour.slice(0, -1).join(',');
+                if (!routeSet.has(routeKey)) {
+                    routeSet.add(routeKey);
+                    routes.push(normalizedTour);
+                }
+            }
+            
+            // 2. 最近傍法の結果を2-optで改善
+            const initialRouteCount = routes.length;
+            for (let i = 0; i < initialRouteCount; i++) {
+                for (let iterations of [100, 500, 1000, 2000]) {
+                    const { tour } = twoOpt(cityList, routes[i], iterations);
+                    const normalizedTour = normalizeTour(tour, 0);
+                    const routeKey = normalizedTour.slice(0, -1).join(',');
+                    if (!routeSet.has(routeKey)) {
+                        routeSet.add(routeKey);
+                        routes.push(normalizedTour);
+                    }
+                }
+            }
+            
+            // 3. ランダムな開始ルートからの2-opt改善
+            while (routes.length < numRoutes) {
+                // ランダムなルートを生成
+                const remainingCities = [];
+                for (let j = 1; j < n; j++) {
+                    remainingCities.push(j);
+                }
+                
+                for (let j = remainingCities.length - 1; j > 0; j--) {
+                    const k = Math.floor(Math.random() * (j + 1));
+                    [remainingCities[j], remainingCities[k]] = [remainingCities[k], remainingCities[j]];
+                }
+                
+                const randomRoute = [0, ...remainingCities, 0];
+                
+                // 2-optで改善
+                const { tour } = twoOpt(cityList, randomRoute, 1000);
+                const normalizedTour = normalizeTour(tour, 0);
+                const routeKey = normalizedTour.slice(0, -1).join(',');
+                if (!routeSet.has(routeKey)) {
+                    routeSet.add(routeKey);
+                    routes.push(normalizedTour);
+                }
+            }
+            
+            console.log('高品質ルート生成完了: ' + routes.length + ' 通り');
+            return routes;
+        }
+
+        /**
+         * ルートを正規化する（指定した都市から始まるように調整）
+         */
+        function normalizeTour(tour, startCity) {
+            const startIndex = tour.indexOf(startCity);
+            if (startIndex === -1) return tour;
+            
+            const normalized = [...tour.slice(startIndex, -1), ...tour.slice(0, startIndex), startCity];
+            return normalized;
+        }
+
+        /**
+         * 2つのルートが同じかどうかを判定する
+         */
+        function isRoutesEqual(route1, route2) {
+            if (route1.length !== route2.length) return false;
+            
+            // 最後の要素（開始点への戻り）を除いて比較
+            const r1 = route1.slice(0, -1);
+            const r2 = route2.slice(0, -1);
+            
+            if (r1.length !== r2.length) return false;
+            
+            // 循環的な比較（異なる開始点でも同じルートを判定）
+            for (let offset = 0; offset < r1.length; offset++) {
+                let match = true;
+                for (let i = 0; i < r1.length; i++) {
+                    if (r1[i] !== r2[(i + offset) % r2.length]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) return true;
+                
+                // 逆方向も確認
+                match = true;
+                for (let i = 0; i < r1.length; i++) {
+                    if (r1[i] !== r2[(r2.length - 1 - i + offset) % r2.length]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) return true;
+            }
+            
+            return false;
+        }
+
+        /**
+         * 上位4位のルートを選択肢として生成する
+         */
+        function generateTopFourRoutes(cityList) {
+            const n = cityList.length;
+            let allRoutes;
+            
+            if (n <= 10) {
+                // 10都市以下：厳密解
+                console.log('厳密解モード (' + n + '都市)');
+                isExactSolution = true;
+                allRoutes = generateAllRoutes(cityList);
+            } else {
+                // 11都市以上：近似解
+                console.log('近似解モード (' + n + '都市)');
+                isExactSolution = false;
+                allRoutes = generateHighQualityRoutes(cityList);
+            }
+            
+            console.log('距離計算中...');
+            // 各ルートの距離を計算
+            const routesWithDistances = allRoutes.map((route, index) => {
+                if (index % 1000 === 0) {
+                    console.log('進捗: ' + index + '/' + allRoutes.length);
+                }
+                return {
+                    route: route,
+                    distance: calculateRouteDistance(cityList, route)
+                };
+            });
+            
+            console.log('ソート中...');
+            // 距離でソート
+            routesWithDistances.sort((a, b) => a.distance - b.distance);
+            
+            console.log('重複除去中...');
+            // 重複を除去しつつ上位4位を取得
+            const uniqueRoutes = [];
+            for (let i = 0; i < routesWithDistances.length && uniqueRoutes.length < 4; i++) {
+                const current = routesWithDistances[i];
+                const isDuplicate = uniqueRoutes.some(existing => 
+                    isRoutesEqual(existing.route, current.route)
+                );
+                
+                if (!isDuplicate) {
+                    uniqueRoutes.push(current);
+                }
+            }
+            
+            console.log('上位4位選出完了:');
+            uniqueRoutes.forEach((item, index) => {
+                console.log((index + 1) + '位: 距離 ' + item.distance.toFixed(2));
+            });
+            
+            return uniqueRoutes;
+        }
+
+        /**
+         * クイズを開始する
+         */
+        function startQuiz() {
+            if (cities.length < 3) {
+                alert('クイズを開始するには少なくとも3つの都市が必要です。');
+                return;
+            }
+
+            console.log('クイズ開始');
+            const startTime = Date.now();
+
+            // 上位4位のルートを取得
+            const topFourRoutes = generateTopFourRoutes(cities);
+            
+            if (topFourRoutes.length < 4) {
+                alert('選択肢を生成できませんでした。都市の配置を変更してください。');
+                return;
+            }
+
+            // 正解は1位、選択肢は上位4位
+            correctRoute = topFourRoutes[0].route;
+            allRoutes = topFourRoutes.map(item => item.route);
+            allDistances = topFourRoutes.map(item => item.distance);
+
+            console.log('選択肢の距離: [' + allDistances.map(d => d.toFixed(2)).join(', ') + ']');
+
+            // 選択肢をシャッフル
+            const options = allRoutes.map((route, i) => ({ route, distance: allDistances[i] }));
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+
+            allRoutes = options.map(option => option.route);
+            allDistances = options.map(option => option.distance);
+
+            // 正解の選択肢のインデックスを記録
+            correctIndex = allRoutes.findIndex(route => isRoutesEqual(route, correctRoute));
+
+            const endTime = Date.now();
+            console.log('計算時間: ' + ((endTime - startTime) / 1000).toFixed(2) + '秒');
+            console.log('正解のインデックス: ' + correctIndex);
+
+            // クイズパネルを表示
+            document.getElementById('setup-panel').classList.add('hidden');
+            document.getElementById('quiz-panel').classList.remove('hidden');
+
+            // キャンバスに都市を描画
+            const quizCanvas = document.getElementById('quiz-canvas');
+            drawCities(quizCanvas, cities);
+
+            // 選択肢を表示
+            displayOptions();
+
+            // 結果をリセット
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('result').textContent = '';
+            document.getElementById('submit-answer').classList.add('hidden');
+            document.getElementById('new-quiz').classList.add('hidden');
+            document.getElementById('back-to-setup').classList.add('hidden');
+
+            selectedOptionIndex = -1;
+        }
+
+        /**
+         * 選択肢を可視化して表示する
+         */
+        function displayOptions() {
+            const routeOptionsDiv = document.getElementById('route-options');
+            routeOptionsDiv.innerHTML = '';
+
+            allRoutes.forEach((route, i) => {
+                const option = document.createElement('div');
+                option.className = 'option';
+                option.dataset.index = i;
+
+                // タイトル
+                const title = document.createElement('div');
+                title.className = 'option-title';
+                title.textContent = '選択肢 ' + (i + 1);
+                option.appendChild(title);
+
+                // キャンバス
+                const canvas = document.createElement('canvas');
+                canvas.className = 'option-canvas';
+                canvas.width = 200;
+                canvas.height = 150;
+                option.appendChild(canvas);
+
+                // ルートを描画
+                drawRoute(canvas, cities, route);
+
+                // ルートテキスト
+                const routeText = document.createElement('div');
+                routeText.className = 'route-text';
+                routeText.textContent = route.map(city => city + 1).join(' → ');
+                option.appendChild(routeText);
+
+                option.addEventListener('click', function() {
+                    // 選択された選択肢をハイライト
+                    document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedOptionIndex = parseInt(this.dataset.index);
+
+                    // 回答ボタンを有効化
+                    document.getElementById('submit-answer').classList.remove('hidden');
+                });
+
+                routeOptionsDiv.appendChild(option);
+            });
+        }
+
+        /**
+         * 回答を提出する
+         */
+        function submitAnswer() {
+            if (selectedOptionIndex === -1) {
+                alert('選択肢を選んでください。');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            const options = document.querySelectorAll('.option');
+
+            // 全ての選択肢のクラスをリセット
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+
+            // 正解の選択肢をマーク
+            options[correctIndex].classList.add('correct');
+
+            // 選択した選択肢が不正解の場合はマーク
+            if (selectedOptionIndex !== correctIndex) {
+                options[selectedOptionIndex].classList.add('incorrect');
+            }
+
+            // 結果メッセージ
+            let resultMessage = '';
+            if (selectedOptionIndex === correctIndex) {
+                resultMessage = '正解です！おめでとうございます！';
+                resultDiv.className = 'result correct-result';
+            } else {
+                resultMessage = '不正解です。正解は選択肢 ' + (correctIndex + 1) + ' でした。';
+                resultDiv.className = 'result incorrect-result';
+            }
+
+            // 各選択肢の詳細を表示
+            const routeResults = document.createElement('div');
+            routeResults.className = 'route-results';
+            routeResults.innerHTML = '<h4>解答（距離順）:</h4>';
+
+            // 距離順にソートして表示
+            const sortedResults = allRoutes.map((route, i) => ({
+                route, 
+                distance: allDistances[i], 
+                originalIndex: i,
+                isCorrect: i === correctIndex,
+                isSelected: i === selectedOptionIndex
+            })).sort((a, b) => a.distance - b.distance);
+
+            sortedResults.forEach((item, rank) => {
+                const routeItem = document.createElement('div');
+                routeItem.className = 'route-result-item';
+                
+                // 正解と選択した選択肢をハイライト
+                if (item.isCorrect) {
+                    routeItem.classList.add('route-result-correct');
+                }
+                if (item.isSelected && !item.isCorrect) {
+                    routeItem.classList.add('route-result-selected');
+                }
+
+                const routeText = item.route.map(city => city + 1).join(' → ');
+                const status = item.isCorrect ? ' (正解・最短)' : 
+                              item.isSelected ? ' (あなたの選択)' : '';
+                
+                routeItem.innerHTML = '【' + (rank + 1) + '位】選択肢 ' + (item.originalIndex + 1) + ': ' + routeText + status + '<br>距離: ' + item.distance.toFixed(2);
+                routeResults.appendChild(routeItem);
+            });
+
+            // 計算方法と難易度情報を追加
+            const computationInfo = document.createElement('div');
+            computationInfo.className = 'computation-info';
+            const distanceGap = sortedResults[1].distance - sortedResults[0].distance;
+            const distanceGapPercent = ((distanceGap/sortedResults[0].distance)*100).toFixed(1);
+            
+            let difficultyLevel = '';
+            if (distanceGapPercent < 1) {
+                difficultyLevel = ' - 非常に高難易度！';
+            } else if (distanceGapPercent < 3) {
+                difficultyLevel = ' - 高難易度';
+            } else if (distanceGapPercent < 5) {
+                difficultyLevel = ' - 中難易度';
+            } else {
+                difficultyLevel = ' - 初級レベル';
+            }
+            
+            computationInfo.innerHTML = '<strong>計算方法:</strong> ' + (isExactSolution ? '厳密解（全順列探索）' : '近似解（ヒューリスティック手法）') + '<br>' +
+                '<strong>難易度:</strong> 1位と2位の距離差 ' + distanceGap.toFixed(2) + ' (' + distanceGapPercent + '%)' + difficultyLevel;
+            routeResults.appendChild(computationInfo);
+
+            resultDiv.innerHTML = resultMessage;
+            resultDiv.appendChild(routeResults);
+            resultDiv.classList.remove('hidden');
+
+            // メインキャンバスに正解のルートを描画
+            const quizCanvas = document.getElementById('quiz-canvas');
+            drawRoute(quizCanvas, cities, correctRoute);
+
+            // ボタンの表示を切り替え
+            document.getElementById('submit-answer').classList.add('hidden');
+            document.getElementById('new-quiz').classList.remove('hidden');
+            document.getElementById('back-to-setup').classList.remove('hidden');
+        }
+
+        /**
+         * 都市の設定に戻る
+         */
+        function backToSetup() {
+            document.getElementById('quiz-panel').classList.add('hidden');
+            document.getElementById('setup-panel').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
